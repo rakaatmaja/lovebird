@@ -23,13 +23,17 @@ class _HomePageState extends State<HomePage> {
     PhotoItem('assets/images/1.jpg'),
     PhotoItem('assets/images/2.jpg'),
     PhotoItem('assets/images/3.jpg'),
+    PhotoItem('assets/images/biben.jpg'),
+    PhotoItem('assets/images/bubun.jpg'),
+    PhotoItem('assets/images/my1.jpg'),
+    PhotoItem('assets/images/my2.jpg'),
+    PhotoItem('assets/images/my4.jpg'),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const Drawer(
-        backgroundColor: Colors.green,
       ),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
@@ -83,15 +87,15 @@ class _HomePageState extends State<HomePage> {
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: [
-                      itemCategory(),
+                      itemCategory('assets/icons/food.png', 'Makanan', Color(0x007D2B2B)),
                       const SizedBox(width: 16),
-                      itemCategory(),
+                        itemCategory('assets/icons/food.png', 'Jenis', Color(0x007D2B2B)),
                       const SizedBox(width: 16),
-                      itemCategory(),
+                        itemCategory('assets/icons/food.png', 'Perawatan', Color(0x007D2B2B)),
                       const SizedBox(width: 16),
-                      itemCategory(),
+                        itemCategory('assets/icons/food.png', 'Gender', Color(0x007D2B2B)),
                       const SizedBox(width: 16),
-                      itemCategory(),
+                   
                     ],
                   ),
                 ),
@@ -102,10 +106,10 @@ class _HomePageState extends State<HomePage> {
               about('Apa itu burung Lovebird', 'Lovervbird adalah',
                   const Color(0xffBBDEFA)),
               const SizedBox(height: 10),
-              about('Apa itu burung Lovebird', 'Lovervbird adalah',
+              about('Sebelum Memelihara', 'Persiapan sebelum memelihara',
                   const Color(0xffFFCDD2)),
               const SizedBox(height: 10),
-              about('Apa itu burung Lovebird', 'Lovervbird adalah',
+              about('Set Up Kandang ', 'Kandang yang baik akan',
                   const Color(0xffFFFAC3)),
               const SizedBox(height: 16),
               const Text('Photo'),
@@ -118,10 +122,11 @@ class _HomePageState extends State<HomePage> {
                     crossAxisCount: 2),
                 itemBuilder: (_, index) {
                   return Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)
+                    elevation: 0,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.asset(dataGrid[index].image, fit: BoxFit.cover,),
                     ),
-                    child: Image.asset(dataGrid[index].image, fit: BoxFit.cover,)
                   );
                 },
               ),
