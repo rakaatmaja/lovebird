@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-about(title, subtitle, color) {
+about(image, title, subtitle, color) {
   return ListTile(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     iconColor: Colors.black,
-    leading: const Icon(Icons.info_sharp),
+    leading: Image.asset(image),
     title: Text(title),
     subtitle: Text(subtitle),
     tileColor: color,
