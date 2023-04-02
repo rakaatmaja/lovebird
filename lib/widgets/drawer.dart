@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
           leading: Image.asset(image, height: 40,width: 40,),
           title: Text(title),
         ),
-          SizedBox(height: 12,),
+          const SizedBox(height: 12,),
 
       ],
     );

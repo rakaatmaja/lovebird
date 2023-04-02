@@ -5,3 +5,9 @@ const kTitle = TextStyle(
   fontSize: 16,
   fontWeight: FontWeight.bold,
 );
+
+const kTitleFood = TextStyle(
+  fontFamily: 'Poopins',
+  fontSize: 16,
+  fontWeight: FontWeight.bold,
+);
