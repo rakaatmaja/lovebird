@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lovebird/pages/food.dart';
 
 import 'pages/home.dart';
+import 'pages/jenis.dart';
 
 void main() => runApp(const MyApp());
 
@@ -10,9 +10,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Food(),
+      home: Jenis(),
     );
   }
 }
