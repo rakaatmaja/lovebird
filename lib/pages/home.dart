@@ -22,14 +22,42 @@ class _HomePageState extends State<HomePage> {
   ];
 
   final List<PhotoItem> dataGrid = [
-    PhotoItem('assets/images/1.jpg'),
-    PhotoItem('assets/images/2.jpg'),
-    PhotoItem('assets/images/3.jpg'),
-    PhotoItem('assets/images/biben.jpg'),
-    PhotoItem('assets/images/bubun.jpg'),
-    PhotoItem('assets/images/my1.jpg'),
-    PhotoItem('assets/images/my2.jpg'),
-    PhotoItem('assets/images/my4.jpg'),
+    PhotoItem(
+      'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15060917/Lovebird-Misty-364x277.jpg',
+      'Lovebird Misty',
+    ),
+    PhotoItem(
+      'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15061243/Lovebird-halfsider-168x300.jpg',
+      'Lovebird Halfsider',
+    ),
+    PhotoItem(
+      'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15061150/Lovebird-Dakori-364x384.jpg',
+      'Lovebird Dakori',
+    ),
+    // PhotoItem(
+    //   'assets/images/biben.jpg',
+    //   'Biben',
+    // ),
+    // PhotoItem(
+    //   'assets/images/bubun.jpg',
+    //   'Lovebird Batman',
+    // ),
+    PhotoItem(
+      'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15062546/Lovebird-muka-salem-Agapornis-roseicollis--384x216.jpg',
+      'Lovebird Muka Salem',
+    ),
+    PhotoItem(
+      'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15061218/Lovebird-biru-mangsi-364x245.jpg',
+      'Lovebird Biru Mangsi',
+    ),
+    PhotoItem(
+      'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15061309/Lovebird-Olive-225x300.jpg',
+      'Lovebird Olive',
+    ),
+    PhotoItem(
+      'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15062452/lovebird-fisher-384x384.jpg',
+      'Lovebird Fischer',
+    ),
   ];
 
   @override
@@ -141,7 +169,10 @@ class _HomePageState extends State<HomePage> {
               about('assets/icons/kandang1.png', 'Set Up Kandang ',
                   'Kandang yang baik akan', const Color(0xffFFFAC3)),
               const SizedBox(height: 16),
-              const Text('Photo', style: kTitle,),
+              const Text(
+                'Photo',
+                style: kTitle,
+              ),
               const SizedBox(height: 16),
               GridView.builder(
                 physics: const NeverScrollableScrollPhysics(),
@@ -154,7 +185,7 @@ class _HomePageState extends State<HomePage> {
                     elevation: 0,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
-                      child: Image.asset(
+                      child: Image.network(
                         dataGrid[index].image,
                         fit: BoxFit.cover,
                       ),
