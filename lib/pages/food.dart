@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lovebird/utils/theme.dart';
 
 import '../widgets/food.dart';
 

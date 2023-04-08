@@ -60,6 +60,7 @@ class _HomePageState extends State<HomePage> {
   //     'Lovebird Fischer',
   //   ),
   // ];
+  final _firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -176,32 +177,30 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 16),
               StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('gallery')
-                    .snapshots(),
+                stream: _firestore.collection('gallery').snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Center(
                       child: CircularProgressIndicator(),
                     );
                   }
+                  List<PhotoItem> data = snapshot.data!.docs
+                      .map((doc) => PhotoItem.fromFirestore(doc))
+                      .toList();
                   return GridView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: snapshot.data!.docs.length,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2),
+                    itemCount: data.length,
                     itemBuilder: (_, index) {
-                      DocumentSnapshot doc = snapshot.data!.docs[index];
-                      Map<String, dynamic> data =
-                          doc.data()! as Map<String, dynamic>;
                       return Card(
                         elevation: 0,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
                           child: Image.network(
-                            data['image'],
+                            data[index].url,
                             fit: BoxFit.cover,
                           ),
                         ),
