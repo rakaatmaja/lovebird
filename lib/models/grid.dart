@@ -1,6 +1,6 @@
 class PhotoItem {
-  String image;
-  String title;
+  String name;
+  String url;
 
-  PhotoItem(this.image, this.title);
+  PhotoItem(this.name, this.url);
 }

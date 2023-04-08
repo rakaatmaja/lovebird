@@ -4,6 +4,7 @@ import 'package:lovebird/models/grid.dart';
 import 'package:lovebird/utils/theme.dart';
 import 'package:lovebird/widgets/category.dart';
 import 'package:lovebird/widgets/drawer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../widgets/about.dart';
 
@@ -21,44 +22,44 @@ class _HomePageState extends State<HomePage> {
     'assets/images/3.jpg',
   ];
 
-  final List<PhotoItem> dataGrid = [
-    PhotoItem(
-      'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15060917/Lovebird-Misty-364x277.jpg',
-      'Lovebird Misty',
-    ),
-    PhotoItem(
-      'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15061243/Lovebird-halfsider-168x300.jpg',
-      'Lovebird Halfsider',
-    ),
-    PhotoItem(
-      'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15061150/Lovebird-Dakori-364x384.jpg',
-      'Lovebird Dakori',
-    ),
-    // PhotoItem(
-    //   'assets/images/biben.jpg',
-    //   'Biben',
-    // ),
-    // PhotoItem(
-    //   'assets/images/bubun.jpg',
-    //   'Lovebird Batman',
-    // ),
-    PhotoItem(
-      'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15062546/Lovebird-muka-salem-Agapornis-roseicollis--384x216.jpg',
-      'Lovebird Muka Salem',
-    ),
-    PhotoItem(
-      'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15061218/Lovebird-biru-mangsi-364x245.jpg',
-      'Lovebird Biru Mangsi',
-    ),
-    PhotoItem(
-      'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15061309/Lovebird-Olive-225x300.jpg',
-      'Lovebird Olive',
-    ),
-    PhotoItem(
-      'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15062452/lovebird-fisher-384x384.jpg',
-      'Lovebird Fischer',
-    ),
-  ];
+  // final List<PhotoItem> dataGrid = [
+  //   PhotoItem(
+  //     'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15060917/Lovebird-Misty-364x277.jpg',
+  //     'Lovebird Misty',
+  //   ),
+  //   PhotoItem(
+  //     'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15061243/Lovebird-halfsider-168x300.jpg',
+  //     'Lovebird Halfsider',
+  //   ),
+  //   PhotoItem(
+  //     'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15061150/Lovebird-Dakori-364x384.jpg',
+  //     'Lovebird Dakori',
+  //   ),
+  //   // PhotoItem(
+  //   //   'assets/images/biben.jpg',
+  //   //   'Biben',
+  //   // ),
+  //   // PhotoItem(
+  //   //   'assets/images/bubun.jpg',
+  //   //   'Lovebird Batman',
+  //   // ),
+  //   PhotoItem(
+  //     'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15062546/Lovebird-muka-salem-Agapornis-roseicollis--384x216.jpg',
+  //     'Lovebird Muka Salem',
+  //   ),
+  //   PhotoItem(
+  //     'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15061218/Lovebird-biru-mangsi-364x245.jpg',
+  //     'Lovebird Biru Mangsi',
+  //   ),
+  //   PhotoItem(
+  //     'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15061309/Lovebird-Olive-225x300.jpg',
+  //     'Lovebird Olive',
+  //   ),
+  //   PhotoItem(
+  //     'https://cdnwpseller.gramedia.net/wp-content/uploads/2021/10/15062452/lovebird-fisher-384x384.jpg',
+  //     'Lovebird Fischer',
+  //   ),
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -174,25 +175,41 @@ class _HomePageState extends State<HomePage> {
                 style: kTitle,
               ),
               const SizedBox(height: 16),
-              GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: dataGrid.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2),
-                itemBuilder: (_, index) {
-                  return Card(
-                    elevation: 0,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.network(
-                        dataGrid[index].image,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('gallery')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return GridView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.docs.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2),
+                    itemBuilder: (_, index) {
+                      DocumentSnapshot doc = snapshot.data!.docs[index];
+                      Map<String, dynamic> data =
+                          doc.data()! as Map<String, dynamic>;
+                      return Card(
+                        elevation: 0,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.network(
+                            data['image'],
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
+                    },
                   );
                 },
-              ),
+              )
             ],
           ),
         ),
