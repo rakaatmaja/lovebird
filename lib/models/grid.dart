@@ -9,18 +9,11 @@ class PhotoItem {
     required this.url,
   });
 
-  // factory PhotoItem.fromJson(Map<String, dynamic> json) {
-  //   return PhotoItem(
-  //     name: json['name'],
-  //     url: json['url'],
-  //   );
-  // }
-
   factory PhotoItem.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+    Map data = doc.data() as Map<String, dynamic>;
     return PhotoItem(
-      name: data['name'],
-      url: data['url'],
+      name: data['name'].toString(),
+      url: data['url'].toString(),
     );
   }
 }

@@ -5,9 +5,9 @@ Widget itemCategory(image, title, color) {
     height: 100,
     width: 100,
     decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(20),
-      ),
+      color: color,
+      borderRadius: BorderRadius.circular(20),
+    ),
     child: Padding(
       padding: const EdgeInsets.all(15),
       child: Column(

@@ -1,8 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:lovebird/pages/food.dart';
 
 import 'firebase_options.dart';
 import 'pages/home.dart';
+import 'pages/jenis.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,13 +15,18 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key}); 
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      initialRoute: '/',
+      routes: {
+        '/': (ctx) => const HomePage(),
+        '/makanan': (ctx) => const Food(),
+        '/jenis': (ctx) => JenisPage(),
+      },
     );
   }
 }
