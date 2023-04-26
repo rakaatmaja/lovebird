@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lovebird/widgets/appbar.dart';
 
 import '../widgets/food.dart';
 
@@ -8,18 +9,7 @@ class Food extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.black),
-        backgroundColor: Colors.grey[50],
-        elevation: 0,
-        leading:
-            const IconButton(onPressed: null, icon: Icon(Icons.arrow_back_ios)),
-        centerTitle: true,
-        title: const Text(
-          'Makanan',
-          style: TextStyle(color: Colors.black),
-        ),
-      ),
+      appBar: appbar('Makanan'),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(

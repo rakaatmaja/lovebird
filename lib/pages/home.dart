@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:lovebird/models/grid.dart';
 import 'package:lovebird/utils/theme.dart';
+import 'package:lovebird/widgets/appbar.dart';
 import 'package:lovebird/widgets/category.dart';
 import 'package:lovebird/widgets/drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -46,17 +47,11 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.black),
-        backgroundColor: Colors.grey[50],
-        elevation: 0,
-        actions: const [
-          IconButton(onPressed: null, icon: Icon(Icons.language))
-        ],
-        centerTitle: true,
-        title: const Text(
-          'Home',
-          style: TextStyle(color: Colors.black),
+      appBar: appbar(
+        'Home',
+        IconButton(
+          onPressed: () => Navigator.pushNamed(context, '/language'),
+          icon: const Icon(Icons.language),
         ),
       ),
       body: SingleChildScrollView(

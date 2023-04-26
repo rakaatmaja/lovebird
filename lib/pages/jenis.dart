@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lovebird/models/jenis.dart';
+import 'package:lovebird/widgets/appbar.dart';
 
 class JenisPage extends StatelessWidget {
   JenisPage({super.key});
@@ -10,18 +11,7 @@ class JenisPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.black),
-        backgroundColor: Colors.grey[50],
-        elevation: 0,
-        leading:
-            const IconButton(onPressed: null, icon: Icon(Icons.arrow_back_ios)),
-        centerTitle: true,
-        title: const Text(
-          'JenisPage',
-          style: TextStyle(color: Colors.black),
-        ),
-      ),
+      appBar: appbar('JenisPage'),
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: StreamBuilder<QuerySnapshot>(
