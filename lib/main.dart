@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lovebird/pages/food.dart';
+import 'package:lovebird/pages/login/register.dart';
 import 'package:lovebird/pages/perawatan.dart';
 
 import 'firebase_options.dart';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/perawatan',
       routes: {
-        '/': (ctx) => const HomePage(),
+        '/': (ctx) => const RegisterPage(),
         '/makanan': (ctx) => const Food(),
         '/jenis': (ctx) => JenisPage(),
         '/perawatan': (ctx) => const PerawatanPage(),

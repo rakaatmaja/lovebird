@@ -18,6 +18,9 @@ class Food extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
+                'Lovebird Hitam',
+              ),
+              const Text(
                 'Makanan Loverbirde pada umumnya diantaranya : ',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
