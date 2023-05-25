@@ -1,7 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:lovebird/auth/auth.dart';
+import 'package:lovebird/pages/home.dart';
 import 'package:lovebird/pages/login/register.dart';
 import 'package:lovebird/utils/theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,6 +15,12 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool isLoading = false;
+  final _auth = Auth();
+
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,9 +47,9 @@ class _LoginPageState extends State<LoginPage> {
             style: kLoginSubtitle,
           ),
           const SizedBox(height: 16),
-          textFieldLogin('Email'),
+          textFieldLogin('Email', _emailController),
           const SizedBox(height: 20),
-          textFieldLogin('Password'),
+          textFieldLogin('Password', _passwordController),
           const SizedBox(height: 20),
           const Align(
               alignment: Alignment.centerRight,
@@ -48,29 +58,29 @@ class _LoginPageState extends State<LoginPage> {
                 style: TextStyle(fontWeight: FontWeight.w500),
               )),
           const SizedBox(height: 20),
-          btnRegister(),
-          SizedBox(
+          btnLogin(),
+          const SizedBox(
             height: 16,
           ),
           btnGoogle(),
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
           Center(
             child: RichText(
               text: TextSpan(
                   text: "Don't have an account?  ",
-                  style: TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.black),
                   children: [
                     TextSpan(
                         text: 'Sign up here',
-                        style: TextStyle(color: Colors.blue),
+                        style: const TextStyle(color: Colors.blue),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (ctx) => RegisterPage()));
+                                    builder: (ctx) => const RegisterPage()));
                           })
                   ]),
             ),
@@ -80,23 +90,63 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  SizedBox btnRegister() {
+  btnLogin() {
     return SizedBox(
       width: double.infinity,
       height: 55,
-      child: TextButton(
-        onPressed: () {},
+      child: ElevatedButton(
+        onPressed: isLoading ? null : handleLogin,
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.black),
           shape: MaterialStateProperty.all(
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          ),
         ),
-        child: const Text(
-          'Sign in',
-          style: kLoginButton,
-        ),
+        child: isLoading
+            ? const SpinKitFadingCircle(
+                size: 50,
+                color: Colors.white,
+              )
+            : const Text(
+                'Sign in',
+                style: kLoginButton,
+              ),
       ),
     );
+  }
+
+  void handleLogin() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      bool success = await _auth.login(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      );
+
+      setState(() {
+        isLoading = false;
+      });
+
+      if (success) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
+
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (ctx) => const HomePage(),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   btnGoogle() {
@@ -136,8 +186,9 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  TextField textFieldLogin(title) {
+  TextField textFieldLogin(title, controller) {
     return TextField(
+      controller: controller,
       decoration: InputDecoration(
         hintText: title,
         focusColor: Colors.grey,

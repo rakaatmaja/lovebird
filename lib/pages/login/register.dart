@@ -1,7 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lovebird/pages/login/login.dart';
 import 'package:lovebird/utils/theme.dart';
+
+import '../../auth/auth.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -11,6 +15,14 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final auth = Auth();
+  final _formKey = GlobalKey<FormState>();
+
+  bool isLoading = false;
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,78 +32,123 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   buildBody() {
-    // final height = MediaQuery.of(context).size.height;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 50),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Create an account',
-            style: kLogin,
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            "Let's get started",
-            style: kLoginSubtitle,
-          ),
-          const SizedBox(height: 30),
-          textFieldLogin('Name'),
-          const SizedBox(height: 16),
-          textFieldLogin('Email'),
-          const SizedBox(height: 16),
-          textFieldLogin('Password'),
-          const SizedBox(height: 30),
-          btnRegister(),
-          SizedBox(
-            height: 16,
-          ),
-          btnGoogle(),
-          SizedBox(
-            height: 30,
-          ),
-          Center(
-            child: RichText(
-              text: TextSpan(
-                  text: 'Already have an account? ',
-                  style: TextStyle(color: Colors.black),
-                  children: [
-                    TextSpan(
-                        text: 'Sign in here',
-                        style: TextStyle(color: Colors.blue),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (ctx) => LoginPage()));
-                          })
-                  ]),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Create an account',
+              style: kLogin,
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            const Text(
+              "Let's get started",
+              style: kLoginSubtitle,
+            ),
+            const SizedBox(height: 30),
+            textFieldLogin('Name', nameController),
+            const SizedBox(height: 16),
+            textFieldLogin('Email', emailController),
+            const SizedBox(height: 16),
+            textFieldLogin('Password', passwordController),
+            const SizedBox(height: 30),
+            btnRegister(),
+            const SizedBox(
+              height: 16,
+            ),
+            btnGoogle(),
+            const SizedBox(
+              height: 30,
+            ),
+            Center(
+              child: RichText(
+                text: TextSpan(
+                    text: 'Already have an account? ',
+                    style: const TextStyle(color: Colors.black),
+                    children: [
+                      TextSpan(
+                          text: 'Sign in here',
+                          style: const TextStyle(color: Colors.blue),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (ctx) => const LoginPage()));
+                            })
+                    ]),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  SizedBox btnRegister() {
+  btnRegister() {
     return SizedBox(
       width: double.infinity,
       height: 55,
-      child: TextButton(
-        onPressed: () {},
+      child: ElevatedButton(
+        onPressed: isLoading ? null : handleRegister,
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.black),
           shape: MaterialStateProperty.all(
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          ),
         ),
-        child: const Text(
-          'Sign up',
-          style: kLoginButton,
-        ),
+        child: isLoading
+            ? SpinKitFadingCircle(
+                size: 50,
+                color: Colors.white,
+              )
+            : const Text(
+                'Sign up',
+                style: kLoginButton,
+              ),
       ),
     );
+  }
+
+  Future<void> handleRegister() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      await auth.register(
+        nameController.text.trim(),
+        emailController.text.trim(),
+        passwordController.text.trim(),
+      );
+
+      setState(() {
+        isLoading = false;
+      });
+
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (ctx) => const LoginPage(),
+        ),
+      );
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+
+      Fluttertoast.showToast(
+        msg: 'Gagal mendaftar: $e',
+        fontSize: 16,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
   }
 
   btnGoogle() {
@@ -131,8 +188,9 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  TextField textFieldLogin(title) {
+  TextField textFieldLogin(String title, controller) {
     return TextField(
+      controller: controller,
       decoration: InputDecoration(
         hintText: title,
         focusColor: Colors.grey,
