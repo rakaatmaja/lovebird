@@ -1,11 +1,13 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:lovebird/auth/auth.dart';
 import 'package:lovebird/models/grid.dart';
+import 'package:lovebird/pages/login/login.dart';
 import 'package:lovebird/utils/theme.dart';
-import 'package:lovebird/widgets/appbar.dart';
 import 'package:lovebird/widgets/category.dart';
 import 'package:lovebird/widgets/drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/about.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,6 +18,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _auth = Auth();
   List data = [
     'assets/images/1.jpg',
     'assets/images/2.jpg',
@@ -44,14 +47,34 @@ class _HomePageState extends State<HomePage> {
             drawerItem('assets/icons/gender.png', 'Gender'),
             const Divider(thickness: 1),
             drawerItem('assets/icons/info.png', 'Info'),
+            GestureDetector(
+              onTap: () async {
+                await _auth.logout();
+                // ignore: use_build_context_synchronously
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.remove('isLoggedIn');
+                // ignore: use_build_context_synchronously
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (ctx) => const LoginPage()),
+                    (route) => false);
+              },
+              child: const ListTile(
+                title: Text('Logout'),
+                leading: Icon(Icons.logout_outlined),
+              ),
+            )
           ],
         ),
       ),
-      appBar: appbar(
-        'Home',
-        IconButton(
-          onPressed: () => Navigator.pushNamed(context, '/language'),
-          icon: const Icon(Icons.language),
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: Colors.grey[50],
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          'Home',
+          style: TextStyle(color: Colors.black),
         ),
       ),
       body: SingleChildScrollView(

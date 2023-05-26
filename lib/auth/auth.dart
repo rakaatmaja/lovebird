@@ -23,7 +23,6 @@ class Auth {
         backgroundColor: Colors.green,
         textColor: Colors.white,
       );
-    } on FirebaseAuthException {
     } catch (e) {
       Fluttertoast.showToast(
         msg: 'Gagal mendaftar',
@@ -41,6 +40,7 @@ class Auth {
         email: email,
         password: password,
       );
+      // ignore: unused_local_variable
       User? user = userCredential.user;
       Fluttertoast.showToast(
         msg: 'Berhasil masuk!',
