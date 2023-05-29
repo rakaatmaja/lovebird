@@ -50,37 +50,41 @@ class _RegisterPageState extends State<RegisterPage> {
               style: kLoginSubtitle,
             ),
             const SizedBox(height: 30),
-            textFieldLogin('Name', nameController),
+            textFieldLogin('Name', nameController, validateName),
             const SizedBox(height: 16),
-            textFieldLogin('Email', emailController),
+            textFieldLogin('Email', emailController, validateEmail),
             const SizedBox(height: 16),
-            textFieldLogin('Password', passwordController),
+            textFieldLogin('Password', passwordController, validatePassword),
             const SizedBox(height: 30),
             btnRegister(),
             const SizedBox(
               height: 16,
             ),
-            btnGoogle(),
+            btnGoogle('Sign up with Google'),
             const SizedBox(
               height: 30,
             ),
             Center(
               child: RichText(
                 text: TextSpan(
-                    text: 'Already have an account? ',
-                    style: const TextStyle(color: Colors.black),
-                    children: [
-                      TextSpan(
-                          text: 'Sign in here',
-                          style: const TextStyle(color: Colors.blue),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (ctx) => const LoginPage()));
-                            })
-                    ]),
+                  text: 'Already have an account? ',
+                  style: const TextStyle(color: Colors.black),
+                  children: [
+                    TextSpan(
+                      text: 'Sign in here',
+                      style: const TextStyle(color: Colors.blue),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (ctx) => const LoginPage(),
+                            ),
+                          );
+                        },
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -94,7 +98,11 @@ class _RegisterPageState extends State<RegisterPage> {
       width: double.infinity,
       height: 55,
       child: ElevatedButton(
-        onPressed: isLoading ? null : handleRegister,
+        onPressed: () {
+          if (_formKey.currentState!.validate()) {
+            isLoading ? null : handleRegister;
+          }
+        },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.black),
           shape: MaterialStateProperty.all(

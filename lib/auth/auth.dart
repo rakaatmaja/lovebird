@@ -50,17 +50,15 @@ class Auth {
       );
       return true;
     } catch (e) {
-   Fluttertoast.showToast(
-          msg: 'Email atau password salah!',
-          fontSize: 16,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-        );
+      Fluttertoast.showToast(
+        msg: 'Email atau password salah!',
+        fontSize: 16,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
       return false;
     }
   }
-
-  
 
   Future<void> logout() async {
     await FirebaseAuth.instance.signOut();
