@@ -21,6 +21,11 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  String? displayName;
+  String? photoUrl;
+  String? email;
+
+  late SharedPreferences _prefs;
 
   Future<void> handleGoogleSignIn() async {
     try {
@@ -39,6 +44,11 @@ class _LoginPageState extends State<LoginPage> {
         final User? user = userCredential.user;
 
         if (user != null) {
+          // Simpan informasi pengguna di SharedPreferences
+          _prefs = await SharedPreferences.getInstance();
+          _prefs!.setString('displayName', user.displayName ?? '');
+          _prefs!.setString('photoUrl', user.photoURL ?? '');
+          _prefs!.setString('email', user.email ?? '');
           // Login dengan Google berhasil, lakukan navigasi ke halaman berikutnya
           // ignore: use_build_context_synchronously
           Navigator.pushReplacementNamed(context, '/home');

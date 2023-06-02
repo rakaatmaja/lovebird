@@ -18,6 +18,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  SharedPreferences? prefs;
   final _auth = Auth();
   List data = [
     'assets/images/1.jpg',
@@ -29,16 +30,18 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    SharedPreferences.getInstance().then((value) => prefs = value);
+
     return Scaffold(
       drawer: Drawer(
         child: ListView(
           children: [
-            const UserAccountsDrawerHeader(
+            UserAccountsDrawerHeader(
                 currentAccountPictureSize: Size.square(80),
                 currentAccountPicture: CircleAvatar(
                   child: Icon(Icons.person, size: 50),
                 ),
-                accountName: Text('Raka'),
+                accountName: Text("${prefs?.getString('displayName') ?? ''}"),
                 accountEmail: Text('raka.dev@gmail.com')),
             drawerItem('assets/icons/food.png', 'Bahasa'),
             drawerItem('assets/icons/food.png', 'Makanan'),
