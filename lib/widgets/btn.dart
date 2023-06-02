@@ -5,6 +5,8 @@ import '../utils/theme.dart';
 textFieldLogin(String title, controller, String? Function(String?)? validator) {
   return TextFormField(
     controller: controller,
+    autovalidateMode:
+        validator != null ? AutovalidateMode.onUserInteraction : null,
     validator: validator,
     decoration: InputDecoration(
       hintText: title,
@@ -20,6 +22,7 @@ String? validateName(value) {
   if (value == null || value.isEmpty) {
     return 'Name must be filled in';
   }
+  return null;
 }
 
 String? validateEmail(value) {
@@ -43,39 +46,3 @@ String? validatePassword(value) {
   return null;
 }
 
-btnGoogle(String title) {
-  return Card(
-    elevation: 1.5,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(15),
-    ),
-    shadowColor: Colors.grey[400],
-    child: SizedBox(
-      height: 55,
-      child: ElevatedButton(
-        style: ButtonStyle(
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.network(
-              "https://firebasestorage.googleapis.com/v0/b/flutterbricks-public.appspot.com/o/crypto%2Fsearch%20(2).png?alt=media&token=24a918f7-3564-4290-b7e4-08ff54b3c94c",
-              width: 20,
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Text(title,
-                style: const TextStyle(color: Colors.black, fontSize: 16)),
-          ],
-        ),
-        onPressed: () {},
-      ),
-    ),
-  );
-}
