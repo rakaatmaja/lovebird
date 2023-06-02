@@ -19,6 +19,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   SharedPreferences? prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    loadSharedPreferences();
+  }
+
+  Future<void> loadSharedPreferences() async {
+    prefs = await SharedPreferences.getInstance();
+    setState(() {});
+  }
+
+  // SharedPreferences? prefs;
   final _auth = Auth();
   List data = [
     'assets/images/1.jpg',
@@ -30,19 +43,28 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    SharedPreferences.getInstance().then((value) => prefs = value);
+    // SharedPreferences.getInstance().then((value) => prefs = value);
 
     return Scaffold(
       drawer: Drawer(
         child: ListView(
           children: [
             UserAccountsDrawerHeader(
-                currentAccountPictureSize: Size.square(80),
-                currentAccountPicture: CircleAvatar(
-                  child: Icon(Icons.person, size: 50),
+              currentAccountPictureSize: const Size.square(80),
+              currentAccountPicture: CircleAvatar(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
+                  child: Image.network(
+                    prefs?.getString('photoUrl') ?? '',
+                  ),
                 ),
-                accountName: Text("${prefs?.getString('displayName') ?? ''}"),
-                accountEmail: Text('raka.dev@gmail.com')),
+              ),
+              accountName: Text(
+                prefs?.getString('displayName') ?? '',
+                style: const TextStyle(fontSize: 16),
+              ),
+              accountEmail: Text(prefs?.getString('email') ?? ''),
+            ),
             drawerItem('assets/icons/food.png', 'Bahasa'),
             drawerItem('assets/icons/food.png', 'Makanan'),
             drawerItem('assets/icons/footprint.png', 'Jenis'),

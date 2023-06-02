@@ -46,9 +46,9 @@ class _LoginPageState extends State<LoginPage> {
         if (user != null) {
           // Simpan informasi pengguna di SharedPreferences
           _prefs = await SharedPreferences.getInstance();
-          _prefs!.setString('displayName', user.displayName ?? '');
-          _prefs!.setString('photoUrl', user.photoURL ?? '');
-          _prefs!.setString('email', user.email ?? '');
+          _prefs.setString('displayName', user.displayName ?? '');
+          _prefs.setString('photoUrl', user.photoURL ?? '');
+          _prefs.setString('email', user.email ?? '');
           // Login dengan Google berhasil, lakukan navigasi ke halaman berikutnya
           // ignore: use_build_context_synchronously
           Navigator.pushReplacementNamed(context, '/home');
