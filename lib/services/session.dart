@@ -1,12 +1,38 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SessionManager {
-  static final String isLoggedInKey = 'isLoggedIn';
-  static final String emailKey = 'email';
-  static final String passwordKey = 'password';
+  static const String isLoggedInKey = 'isLoggedIn';
+  static const String emailKey = 'email';
+  static const String passwordKey = 'password';
+  static const String displayNameKey = 'name';
+  // static const String photoUrlKey = 'photoUrl';
+
+  // ...
+
+  // Mengatur informasi profil pengguna
+  static Future<void> setUserInfo(
+      String name, String email, String photoUrl) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(displayNameKey, name);
+    await prefs.setString(emailKey, email);
+    // await prefs.setString(photoUrlKey, photoUrl);
+  }
+
+  // Mendapatkan nama pengguna
+  static Future<String?> getDisplayName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(displayNameKey);
+  }
+
+  // Mendapatkan URL foto profil
+  // static Future<String?> getPhotoUrl() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   return prefs.getString(photoUrlKey);
+  // }
 
   // Mengatur status login menggunakan email dan password
-  static Future<void> setEmailPasswordLoginStatus(bool isLoggedIn, String email, String password) async {
+  static Future<void> setEmailPasswordLoginStatus(
+      bool isLoggedIn, String email, String password) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool(isLoggedInKey, isLoggedIn);
     await prefs.setString(emailKey, email);
@@ -55,5 +81,8 @@ class SessionManager {
   static Future<void> clearGoogleLoginSession() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove(isLoggedInKey);
+    await prefs.remove('displayName');
+    await prefs.remove('photoUrl');
+    await prefs.remove('email');
   }
 }

@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lovebird/auth/auth.dart';
 import 'package:lovebird/pages/home.dart';
 import 'package:lovebird/pages/login/register.dart';
+import 'package:lovebird/services/session.dart';
 import 'package:lovebird/utils/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -43,14 +44,27 @@ class _LoginPageState extends State<LoginPage> {
             await FirebaseAuth.instance.signInWithCredential(credential);
         final User? user = userCredential.user;
 
+        // if (user != null) {
+        //   // Simpan informasi pengguna di SharedPreferences
+        //   _prefs = await SharedPreferences.getInstance();
+        //   _prefs.setString('displayName', user.displayName ?? '');
+        //   _prefs.setString('photoUrl', user.photoURL ?? '');
+        //   _prefs.setString('email', user.email ?? '');
+        //   // Login dengan Google berhasil, lakukan navigasi ke halaman berikutnya
+        //   // ignore: use_build_context_synchronously
+        //   Navigator.pushReplacementNamed(context, '/home');
+        // }
         if (user != null) {
-          // Simpan informasi pengguna di SharedPreferences
+          // Simpan informasi pengguna di SessionManager
+          await SessionManager.setGoogleLoginStatus(true);
           _prefs = await SharedPreferences.getInstance();
           _prefs.setString('displayName', user.displayName ?? '');
           _prefs.setString('photoUrl', user.photoURL ?? '');
           _prefs.setString('email', user.email ?? '');
+          // await SessionManager.setEmail(user.email ?? '');
+          // Lanjutkan dengan menyimpan informasi lain yang Anda perlukan di SessionManager
+
           // Login dengan Google berhasil, lakukan navigasi ke halaman berikutnya
-          // ignore: use_build_context_synchronously
           Navigator.pushReplacementNamed(context, '/home');
         }
       }
@@ -75,7 +89,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   buildBody() {
-    // final height = MediaQuery.of(context).size.height;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 50),
       child: Form(
@@ -175,16 +188,28 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      bool success = await _auth.login(
+      bool isLoggedIn = await _auth.login(
         _emailController.text.trim(),
         _passwordController.text.trim(),
       );
+
+      if (isLoggedIn) {
+        // Setelah login berhasil, atur status login menggunakan email dan password
+        await SessionManager.setEmailPasswordLoginStatus(true,
+            _emailController.text.trim(), _passwordController.text.trim());
+
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (ctx) => const HomePage()),
+        );
+      }
 
       setState(() {
         isLoading = false;
       });
 
-      if (success) {
+      if (isLoggedIn) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isLoggedIn', true);
 
@@ -218,6 +243,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ),
+          onPressed: handleGoogleSignIn,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -232,7 +258,6 @@ class _LoginPageState extends State<LoginPage> {
                   style: const TextStyle(color: Colors.black, fontSize: 16)),
             ],
           ),
-          onPressed: handleGoogleSignIn,
         ),
       ),
     );

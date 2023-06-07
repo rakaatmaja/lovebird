@@ -12,9 +12,17 @@ import 'package:lovebird/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    bool? isLoggedIn = true;
+    // bool? isLoggedIn = true;
+    bool isLoggedIn = true; // Mengubah tipe data menjadi bool non-nullable
+    bool isGoogleLoggedIn = false; // Tambahkan argumen isGoogleLoggedIn
+
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp(isLoggedIn: isLoggedIn));
+    // await tester.pumpWidget(MyApp(isLoggedIn: isLoggedIn));
+
+    await tester.pumpWidget(MyApp(
+      isLoggedIn: isLoggedIn,
+      isGoogleLoggedIn: isGoogleLoggedIn, // Tambahkan argumen isGoogleLoggedIn
+    ));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

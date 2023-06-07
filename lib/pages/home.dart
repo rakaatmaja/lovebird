@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lovebird/auth/auth.dart';
 import 'package:lovebird/models/grid.dart';
@@ -8,6 +9,7 @@ import 'package:lovebird/widgets/category.dart';
 import 'package:lovebird/widgets/drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/session.dart';
 import '../widgets/about.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,20 +20,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  SharedPreferences? prefs;
+  // SharedPreferences? prefs;
 
-  @override
-  void initState() {
-    super.initState();
-    loadSharedPreferences();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   loadSharedPreferences();
+  // }
 
-  Future<void> loadSharedPreferences() async {
-    prefs = await SharedPreferences.getInstance();
-    setState(() {});
-  }
+  // Future<void> loadSharedPreferences() async {
+  //   prefs = await SharedPreferences.getInstance();
+  //   setState(() {});
+  // }
 
   // SharedPreferences? prefs;
+
   final _auth = Auth();
   List data = [
     'assets/images/1.jpg',
@@ -44,53 +47,76 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     // SharedPreferences.getInstance().then((value) => prefs = value);
+    User? user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            UserAccountsDrawerHeader(
-              currentAccountPictureSize: const Size.square(80),
-              currentAccountPicture: CircleAvatar(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: Image.network(
-                    prefs?.getString('photoUrl') ?? '',
+      drawer: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+        future: _firestore.collection('users').doc(user!.uid).get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Drawer(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (snapshot.hasError) {
+            return const Text('Error retrieving user information');
+          }
+
+          String? displayName = snapshot.data?.get('name');
+          String? email = snapshot.data?.get('email');
+
+          return Drawer(
+            child: ListView(
+              children: [
+                UserAccountsDrawerHeader(
+                  currentAccountPictureSize: const Size.square(80),
+                  currentAccountPicture:
+                      const CircleAvatar(child: Icon(Icons.person)),
+                  accountName: Text(
+                    displayName ?? '',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  accountEmail: Text(email ?? ''),
+                ),
+                drawerItem('assets/icons/food.png', 'Bahasa'),
+                drawerItem('assets/icons/food.png', 'Makanan'),
+                drawerItem('assets/icons/footprint.png', 'Jenis'),
+                drawerItem('assets/icons/care.png', 'Perawatan'),
+                drawerItem('assets/icons/gender.png', 'Gender'),
+                const Divider(thickness: 1),
+                drawerItem('assets/icons/info.png', 'Info'),
+                GestureDetector(
+                  onTap: () async {
+                    await _auth.logout();
+                    // SharedPreferences prefs = await SharedPreferences.getInstance();
+                    // bool isGoogleLoggedIn =
+                    //     await SessionManager.getGoogleLoginStatus();
+                    // bool isEmailPasswordLoggedIn =
+                    //     await SessionManager.getEmailPasswordLoginStatus();
+
+                    // if (isGoogleLoggedIn) {
+                    //   await SessionManager.clearGoogleLoginSession();
+                    // } else if (isEmailPasswordLoggedIn) {
+                    //   await SessionManager.clearEmailPasswordLoginSession();
+                    // }
+
+                    // prefs.remove('isLoggedIn');
+                    // ignore: use_build_context_synchronously
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (ctx) => const LoginPage()),
+                        (route) => false);
+                  },
+                  child: const ListTile(
+                    title: Text('Logout'),
+                    leading: Icon(Icons.logout_outlined),
                   ),
                 ),
-              ),
-              accountName: Text(
-                prefs?.getString('displayName') ?? '',
-                style: const TextStyle(fontSize: 16),
-              ),
-              accountEmail: Text(prefs?.getString('email') ?? ''),
+              ],
             ),
-            drawerItem('assets/icons/food.png', 'Bahasa'),
-            drawerItem('assets/icons/food.png', 'Makanan'),
-            drawerItem('assets/icons/footprint.png', 'Jenis'),
-            drawerItem('assets/icons/care.png', 'Perawatan'),
-            drawerItem('assets/icons/gender.png', 'Gender'),
-            const Divider(thickness: 1),
-            drawerItem('assets/icons/info.png', 'Info'),
-            GestureDetector(
-              onTap: () async {
-                await _auth.logout();
-                // ignore: use_build_context_synchronously
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.remove('isLoggedIn');
-                // ignore: use_build_context_synchronously
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (ctx) => const LoginPage()),
-                    (route) => false);
-              },
-              child: const ListTile(
-                title: Text('Logout'),
-                leading: Icon(Icons.logout_outlined),
-              ),
-            )
-          ],
-        ),
+          );
+        },
       ),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),

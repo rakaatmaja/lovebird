@@ -5,6 +5,7 @@ import 'package:lovebird/pages/login/login.dart';
 import 'package:lovebird/utils/theme.dart';
 
 import '../../auth/auth.dart';
+import '../../services/session.dart';
 import '../../widgets/btn.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -94,42 +95,41 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   btnGoogle(String title) {
-  return Card(
-    elevation: 1.5,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(15),
-    ),
-    shadowColor: Colors.grey[400],
-    child: SizedBox(
-      height: 55,
-      child: ElevatedButton(
-        style: ButtonStyle(
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+    return Card(
+      elevation: 1.5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      shadowColor: Colors.grey[400],
+      child: SizedBox(
+        height: 55,
+        child: ElevatedButton(
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
             ),
           ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.network(
+                "https://firebasestorage.googleapis.com/v0/b/flutterbricks-public.appspot.com/o/crypto%2Fsearch%20(2).png?alt=media&token=24a918f7-3564-4290-b7e4-08ff54b3c94c",
+                width: 20,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Text(title,
+                  style: const TextStyle(color: Colors.black, fontSize: 16)),
+            ],
+          ),
+          onPressed: () {},
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.network(
-              "https://firebasestorage.googleapis.com/v0/b/flutterbricks-public.appspot.com/o/crypto%2Fsearch%20(2).png?alt=media&token=24a918f7-3564-4290-b7e4-08ff54b3c94c",
-              width: 20,
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Text(title,
-                style: const TextStyle(color: Colors.black, fontSize: 16)),
-          ],
-        ),
-        onPressed: () {},
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   btnRegister() {
     return SizedBox(
@@ -173,6 +173,9 @@ class _RegisterPageState extends State<RegisterPage> {
         emailController.text.trim(),
         passwordController.text.trim(),
       );
+
+      await SessionManager.setEmailPasswordLoginStatus(
+          true, emailController.text.trim(), passwordController.text.trim());
 
       setState(() {
         isLoading = false;
