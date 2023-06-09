@@ -28,8 +28,12 @@ class Auth {
       // await prefs.setString('email', user?.email ?? '');
 
       toast('BerhasilDaftar');
-    } catch (e) {
-      toast('Gagal mendaftar');
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        toast('Email telah terdaftar');
+      } else {
+        toast('Terjadi kesalahan');
+      }
     }
   }
 
@@ -44,8 +48,12 @@ class Auth {
       User? user = userCredential.user;
       toast('Berhasil masuk!');
       return true;
-    } catch (e) {
-      toast('Email atau password salah!');
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        toast('User tidak ditemukan');
+      } else if (e.code == 'wrong-password') {
+        toast('Email atau password salah');
+      }
       return false;
     }
   }

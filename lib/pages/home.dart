@@ -8,8 +8,6 @@ import 'package:lovebird/utils/theme.dart';
 import 'package:lovebird/widgets/category.dart';
 import 'package:lovebird/widgets/drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../services/session.dart';
 import '../widgets/about.dart';
 
 class HomePage extends StatefulWidget {

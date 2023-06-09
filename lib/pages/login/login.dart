@@ -11,6 +11,7 @@ import 'package:lovebird/utils/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../widgets/btn.dart';
+import '../../widgets/toast.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -65,6 +66,7 @@ class _LoginPageState extends State<LoginPage> {
           // Lanjutkan dengan menyimpan informasi lain yang Anda perlukan di SessionManager
 
           // Login dengan Google berhasil, lakukan navigasi ke halaman berikutnya
+          toast('Berhasil masuk!');
           Navigator.pushReplacementNamed(context, '/home');
         }
       }
