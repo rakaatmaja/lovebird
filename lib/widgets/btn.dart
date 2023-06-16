@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../utils/theme.dart';
 
-textFieldLogin(String title, controller, String? Function(String?)? validator) {
+textFieldLogin(String title, controller, String? Function(String?)? validator,
+    TextInputType textInputType,
+    [bool isObsecure = true, Widget? suffixIcon]) {
   return TextFormField(
+    obscureText: isObsecure,
+    keyboardType: textInputType,
     controller: controller,
     autovalidateMode:
         validator != null ? AutovalidateMode.onUserInteraction : null,
     validator: validator,
     decoration: InputDecoration(
+      suffixIcon: suffixIcon,
       hintText: title,
       focusColor: Colors.grey,
       hoverColor: Colors.grey,
@@ -45,4 +50,3 @@ String? validatePassword(value) {
   }
   return null;
 }
-

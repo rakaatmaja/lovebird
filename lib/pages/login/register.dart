@@ -20,6 +20,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
 
   bool isLoading = false;
+  bool isObsecure = true;
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -41,6 +42,16 @@ class _RegisterPageState extends State<RegisterPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Center(
+              child: Image.asset(
+                'assets/icon.png',
+                width: 100,
+                height: 100,
+              ),
+            ),
+            const SizedBox(
+              height: 50,
+            ),
             const Text(
               'Create an account',
               style: kLogin,
@@ -51,11 +62,28 @@ class _RegisterPageState extends State<RegisterPage> {
               style: kLoginSubtitle,
             ),
             const SizedBox(height: 30),
-            textFieldLogin('Name', nameController, validateName),
+            textFieldLogin('Name', nameController, validateName,
+                TextInputType.text, false),
             const SizedBox(height: 16),
-            textFieldLogin('Email', emailController, validateEmail),
+            textFieldLogin('Email', emailController, validateEmail,
+                TextInputType.emailAddress, false),
             const SizedBox(height: 16),
-            textFieldLogin('Password', passwordController, validatePassword),
+            textFieldLogin(
+              'Password',
+              passwordController,
+              validatePassword,
+              TextInputType.text,
+              isObsecure,
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    isObsecure = !isObsecure;
+                  });
+                },
+                icon:
+                    Icon(isObsecure ? Icons.visibility_off : Icons.visibility),
+              ),
+            ),
             const SizedBox(height: 30),
             btnRegister(),
             const SizedBox(
@@ -105,6 +133,7 @@ class _RegisterPageState extends State<RegisterPage> {
         height: 55,
         child: ElevatedButton(
           style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.white),
             shape: MaterialStateProperty.all(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
@@ -114,9 +143,9 @@ class _RegisterPageState extends State<RegisterPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.network(
-                "https://firebasestorage.googleapis.com/v0/b/flutterbricks-public.appspot.com/o/crypto%2Fsearch%20(2).png?alt=media&token=24a918f7-3564-4290-b7e4-08ff54b3c94c",
-                width: 20,
+              Image.asset(
+                'assets/icons/google.png',
+                height: 30,
               ),
               const SizedBox(
                 width: 10,

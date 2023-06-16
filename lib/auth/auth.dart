@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lovebird/widgets/toast.dart';
@@ -27,10 +28,16 @@ class Auth {
       // await prefs.setString('photoUrl', user?.photoURL ?? '');
       // await prefs.setString('email', user?.email ?? '');
 
-      toast('BerhasilDaftar');
+      toast('Berhasil daftar!');
     } on FirebaseAuthException catch (e) {
+      final result = await (Connectivity().checkConnectivity());
       if (e.code == 'email-already-in-use') {
         toast('Email telah terdaftar');
+      }
+      // ignore: unrelated_type_equality_checks
+      else if (result == ConnectivityResult.none) {
+        toast('You are offline');
+        // ignore: unrelated_type_equality_checks
       } else {
         toast('Terjadi kesalahan');
       }

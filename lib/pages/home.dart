@@ -8,6 +8,7 @@ import 'package:lovebird/utils/theme.dart';
 import 'package:lovebird/widgets/category.dart';
 import 'package:lovebird/widgets/drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:lovebird/widgets/toast.dart';
 import '../widgets/about.dart';
 
 class HomePage extends StatefulWidget {
@@ -58,7 +59,7 @@ class _HomePageState extends State<HomePage> {
           }
 
           if (snapshot.hasError) {
-            return const Text('Error retrieving user information');
+            return toast('Gagal mendapatkan informasi');
           }
 
           String? displayName = snapshot.data?.get('name');
@@ -69,8 +70,11 @@ class _HomePageState extends State<HomePage> {
               children: [
                 UserAccountsDrawerHeader(
                   currentAccountPictureSize: const Size.square(80),
-                  currentAccountPicture:
-                      const CircleAvatar(child: Icon(Icons.person)),
+                  currentAccountPicture: const CircleAvatar(
+                      child: Icon(
+                    Icons.person,
+                    size: 50,
+                  )),
                   accountName: Text(
                     displayName ?? '',
                     style: const TextStyle(fontSize: 16),

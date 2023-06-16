@@ -32,7 +32,7 @@ void main() async {
   ));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final bool isLoggedIn;
   final String? email;
   final String? password;
@@ -46,12 +46,18 @@ class MyApp extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Lovebird',
       supportedLocales: L10n.all,
       debugShowCheckedModeBanner: false,
       // initialRoute: isLoggedIn == true ? '/home' : '/',
-      initialRoute: isLoggedIn ? '/home' : '/',
+      initialRoute: widget.isLoggedIn ? '/home' : '/',
       routes: {
         '/': (ctx) => const LoginPage(),
         '/home': (ctx) => const HomePage(),

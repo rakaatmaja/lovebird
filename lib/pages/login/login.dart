@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +24,38 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  late StreamSubscription subscribtion;
+  @override
+  void initState() {
+    super.initState();
+    subscribtion =
+        Connectivity().onConnectivityChanged.listen((showConnectivityResult) {
+      // Got a new connectivity status!
+    });
+  }
+
+  @override
+  void dispose() {
+    subscribtion.cancel();
+    super.dispose();
+  }
+
+  // ignore: unused_element
+  void _showConnectivityResult(ConnectivityResult result) {
+    // ignore: unrelated_type_equality_checks
+    final hasInternet = result != ConnectionState.none;
+    final message = hasInternet
+        ? result == ConnectivityResult.mobile
+            ? toast('You are online with mobile network')
+            : toast('You are online with Wifi network')
+        : toast('You have no internet');
+    _showToast(message);
+  }
+
+  void _showToast(message) {
+    toast(message);
+  }
+
   final _formKey = GlobalKey<FormState>();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   String? displayName;
@@ -46,13 +81,13 @@ class _LoginPageState extends State<LoginPage> {
         final User? user = userCredential.user;
 
         // if (user != null) {
-        //   // Simpan informasi pengguna di SharedPreferences
+        // Simpan informasi pengguna di SharedPreferences
         //   _prefs = await SharedPreferences.getInstance();
         //   _prefs.setString('displayName', user.displayName ?? '');
         //   _prefs.setString('photoUrl', user.photoURL ?? '');
         //   _prefs.setString('email', user.email ?? '');
-        //   // Login dengan Google berhasil, lakukan navigasi ke halaman berikutnya
-        //   // ignore: use_build_context_synchronously
+        // Login dengan Google berhasil, lakukan navigasi ke halaman berikutnya
+        // ignore: use_build_context_synchronously
         //   Navigator.pushReplacementNamed(context, '/home');
         // }
         if (user != null) {
@@ -77,6 +112,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   bool isLoading = false;
+  bool isObsecure = true;
   final _auth = Auth();
 
   final _emailController = TextEditingController();
@@ -99,6 +135,16 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Center(
+              child: Image.asset(
+                'assets/icon.png',
+                width: 100,
+                height: 100,
+              ),
+            ),
+            const SizedBox(
+              height: 50,
+            ),
             const Text(
               'Welcome back',
               style: kLogin,
@@ -109,9 +155,26 @@ class _LoginPageState extends State<LoginPage> {
               style: kLoginSubtitle,
             ),
             const SizedBox(height: 16),
-            textFieldLogin('Email', _emailController, validateEmail),
+            textFieldLogin('Email', _emailController, validateEmail,
+                TextInputType.emailAddress, false),
             const SizedBox(height: 20),
-            textFieldLogin('Password', _passwordController, validatePassword),
+            textFieldLogin(
+              'Password',
+              _passwordController,
+              validatePassword,
+              TextInputType.text,
+              isObsecure,
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    isObsecure = !isObsecure;
+                  });
+                },
+                icon: Icon(
+                  isObsecure ? Icons.visibility_off : Icons.visibility,
+                ),
+              ),
+            ),
             const SizedBox(height: 20),
             const Align(
                 alignment: Alignment.centerRight,
@@ -172,8 +235,8 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         child: isLoading
-            ? const SpinKitFadingCircle(
-                size: 50,
+            ? const SpinKitWave(
+                size: 25,
                 color: Colors.white,
               )
             : const Text(
@@ -184,47 +247,54 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void handleLogin() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    try {
-      bool isLoggedIn = await _auth.login(
-        _emailController.text.trim(),
-        _passwordController.text.trim(),
-      );
-
-      if (isLoggedIn) {
-        // Setelah login berhasil, atur status login menggunakan email dan password
-        await SessionManager.setEmailPasswordLoginStatus(true,
-            _emailController.text.trim(), _passwordController.text.trim());
-
-        // ignore: use_build_context_synchronously
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (ctx) => const HomePage()),
-        );
-      }
-
+  handleLogin() async {
+    final result = await (Connectivity().checkConnectivity());
+    // ignore: unrelated_type_equality_checks
+    if (result == ConnectivityResult.none) {
+      toast('You are offline');
+      // ignore: unrelated_type_equality_checks
+    } else {
       setState(() {
-        isLoading = false;
+        isLoading = true;
       });
 
-      if (isLoggedIn) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('isLoggedIn', true);
+      try {
+        bool isLoggedIn = await _auth.login(
+          _emailController.text.trim(),
+          _passwordController.text.trim(),
+        );
 
-        // ignore: use_build_context_synchronously
-        Navigator.pushAndRemoveUntil(
+        if (isLoggedIn) {
+          // Setelah login berhasil, atur status login menggunakan email dan password
+          await SessionManager.setEmailPasswordLoginStatus(true,
+              _emailController.text.trim(), _passwordController.text.trim());
+
+          // ignore: use_build_context_synchronously
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (ctx) => const HomePage()),
-            (route) => false);
+          );
+        }
+
+        setState(() {
+          isLoading = false;
+        });
+
+        // if (isLoggedIn) {
+        //   SharedPreferences prefs = await SharedPreferences.getInstance();
+        //   await prefs.setBool('isLoggedIn', true);
+
+        //   // ignore: use_build_context_synchronously
+        //   Navigator.pushAndRemoveUntil(
+        //       context,
+        //       MaterialPageRoute(builder: (ctx) => const HomePage()),
+        //       (route) => false);
+        // }
+      } catch (e) {
+        setState(() {
+          isLoading = false;
+        });
       }
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
     }
   }
 
@@ -239,6 +309,7 @@ class _LoginPageState extends State<LoginPage> {
         height: 55,
         child: ElevatedButton(
           style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.white),
             shape: MaterialStateProperty.all(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
@@ -249,9 +320,9 @@ class _LoginPageState extends State<LoginPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.network(
-                "https://firebasestorage.googleapis.com/v0/b/flutterbricks-public.appspot.com/o/crypto%2Fsearch%20(2).png?alt=media&token=24a918f7-3564-4290-b7e4-08ff54b3c94c",
-                width: 20,
+              Image.asset(
+                'assets/icons/google.png',
+                height: 30,
               ),
               const SizedBox(
                 width: 10,
