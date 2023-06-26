@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lovebird/auth/auth.dart';
 import 'package:lovebird/models/grid.dart';
 import 'package:lovebird/pages/login/login.dart';
@@ -9,6 +11,7 @@ import 'package:lovebird/widgets/category.dart';
 import 'package:lovebird/widgets/drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lovebird/widgets/toast.dart';
+import '../services/user.dart';
 import '../widgets/about.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,20 +22,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // SharedPreferences? prefs;
+  GoogleSignInAccount? _googleSignInAccount;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   loadSharedPreferences();
-  // }
-
-  // Future<void> loadSharedPreferences() async {
-  //   prefs = await SharedPreferences.getInstance();
-  //   setState(() {});
-  // }
-
-  // SharedPreferences? prefs;
+  final _firestore = FirebaseFirestore.instance;
 
   final _auth = Auth();
   List data = [
@@ -41,11 +33,8 @@ class _HomePageState extends State<HomePage> {
     'assets/images/3.jpg',
   ];
 
-  final _firestore = FirebaseFirestore.instance;
-
   @override
   Widget build(BuildContext context) {
-    // SharedPreferences.getInstance().then((value) => prefs = value);
     User? user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
@@ -62,24 +51,45 @@ class _HomePageState extends State<HomePage> {
             return toast('Gagal mendapatkan informasi');
           }
 
-          String? displayName = snapshot.data?.get('name');
-          String? email = snapshot.data?.get('email');
+          String? _displayName;
+          String? _email;
+          String? _photoUrl;
+
+          // Mendapatkan informasi pengguna dari metode login email/password
+          if (user.email != null) {
+            _displayName = user.displayName;
+            _email = user.email;
+          }
+
+          // Mendapatkan informasi pengguna dari metode login Google
+          if (_googleSignInAccount != null) {
+            _displayName = _googleSignInAccount!.displayName;
+            _email = _googleSignInAccount!.email;
+            _photoUrl = _googleSignInAccount!.photoUrl;
+          }
 
           return Drawer(
             child: ListView(
               children: [
                 UserAccountsDrawerHeader(
                   currentAccountPictureSize: const Size.square(80),
-                  currentAccountPicture: const CircleAvatar(
-                      child: Icon(
-                    Icons.person,
-                    size: 50,
-                  )),
-                  accountName: Text(
-                    displayName ?? '',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  accountEmail: Text(email ?? ''),
+                  currentAccountPicture: UserManager.photoUrl != null
+                      ? CircleAvatar(
+                          backgroundImage: NetworkImage(UserManager.photoUrl!),
+                        )
+                      : const CircleAvatar(
+                          child: Icon(
+                            Icons.person,
+                            size: 50,
+                          ),
+                        ),
+                  accountName: _displayName != null
+                      ? Text(
+                          _displayName,
+                          style: const TextStyle(fontSize: 16),
+                        )
+                      : null,
+                  accountEmail: _email != null ? Text(_email) : null,
                 ),
                 drawerItem('assets/icons/food.png', 'Bahasa'),
                 drawerItem('assets/icons/food.png', 'Makanan'),
@@ -171,7 +181,7 @@ class _HomePageState extends State<HomePage> {
               SizedBox(
                 height: 100,
                 child: ListView(
-                  physics: const BouncingScrollPhysics(),
+                  physics: const AlwaysScrollableScrollPhysics(),
                   scrollDirection: Axis.horizontal,
                   children: [
                     GestureDetector(

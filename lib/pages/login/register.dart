@@ -34,89 +34,93 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   buildBody() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 50),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Image.asset(
-                'assets/icon.png',
-                width: 100,
-                height: 100,
-              ),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            const Text(
-              'Create an account',
-              style: kLogin,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              "Let's get started",
-              style: kLoginSubtitle,
-            ),
-            const SizedBox(height: 30),
-            textFieldLogin('Name', nameController, validateName,
-                TextInputType.text, false),
-            const SizedBox(height: 16),
-            textFieldLogin('Email', emailController, validateEmail,
-                TextInputType.emailAddress, false),
-            const SizedBox(height: 16),
-            textFieldLogin(
-              'Password',
-              passwordController,
-              validatePassword,
-              TextInputType.text,
-              isObsecure,
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    isObsecure = !isObsecure;
-                  });
-                },
-                icon:
-                    Icon(isObsecure ? Icons.visibility_off : Icons.visibility),
-              ),
-            ),
-            const SizedBox(height: 30),
-            btnRegister(),
-            const SizedBox(
-              height: 16,
-            ),
-            btnGoogle('Sign up with Google'),
-            const SizedBox(
-              height: 30,
-            ),
-            Center(
-              child: RichText(
-                text: TextSpan(
-                  text: 'Already have an account? ',
-                  style: const TextStyle(color: Colors.black),
-                  children: [
-                    TextSpan(
-                      text: 'Sign in here',
-                      style: const TextStyle(color: Colors.blue),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (ctx) => const LoginPage(),
-                            ),
-                          );
-                        },
-                    ),
-                  ],
+    return Center(
+      child: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Image.asset(
+                    'assets/icon.png',
+                    width: 100,
+                    height: 100,
+                  ),
                 ),
-              ),
+                const SizedBox(
+                  height: 50,
+                ),
+                const Text(
+                  'Create an account',
+                  style: kLogin,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  "Let's get started",
+                  style: kLoginSubtitle,
+                ),
+                const SizedBox(height: 30),
+                textFieldLogin('Name', nameController, validateName,
+                    TextInputType.text, false),
+                const SizedBox(height: 16),
+                textFieldLogin('Email', emailController, validateEmail,
+                    TextInputType.emailAddress, false),
+                const SizedBox(height: 16),
+                textFieldLogin(
+                  'Password',
+                  passwordController,
+                  validatePassword,
+                  TextInputType.text,
+                  isObsecure,
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isObsecure = !isObsecure;
+                      });
+                    },
+                    icon: Icon(
+                        isObsecure ? Icons.visibility_off : Icons.visibility),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                btnRegister(),
+                const SizedBox(
+                  height: 16,
+                ),
+                btnGoogle('Sign up with Google'),
+                const SizedBox(
+                  height: 30,
+                ),
+                Center(
+                  child: RichText(
+                    text: TextSpan(
+                      text: 'Already have an account? ',
+                      style: const TextStyle(color: Colors.black),
+                      children: [
+                        TextSpan(
+                          text: 'Sign in here',
+                          style: const TextStyle(color: Colors.blue),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (ctx) => const LoginPage(),
+                                ),
+                              );
+                            },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

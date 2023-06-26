@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
-appbar(title, [action]) {
+appbar(BuildContext context, title, [action]) {
   return AppBar(
     iconTheme: const IconThemeData(color: Colors.black),
     backgroundColor: Colors.grey[50],
     elevation: 0,
-    leading:
-        const IconButton(onPressed: null, icon: Icon(Icons.arrow_back_ios)),
+    leading: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: Icon(Icons.arrow_back_ios)),
     centerTitle: true,
     title: Text(
       title,

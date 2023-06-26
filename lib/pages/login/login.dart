@@ -13,6 +13,7 @@ import 'package:lovebird/services/session.dart';
 import 'package:lovebird/utils/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../services/user.dart';
 import '../../widgets/btn.dart';
 import '../../widgets/toast.dart';
 
@@ -58,9 +59,10 @@ class _LoginPageState extends State<LoginPage> {
 
   final _formKey = GlobalKey<FormState>();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-  String? displayName;
-  String? photoUrl;
-  String? email;
+  late final GoogleSignInAccount? _googleSignInAccount;
+  String? _displayName;
+  String? _photoUrl;
+  String? _email;
 
   late SharedPreferences _prefs;
 
@@ -75,10 +77,13 @@ class _LoginPageState extends State<LoginPage> {
           idToken: googleAuth.idToken,
           accessToken: googleAuth.accessToken,
         );
-
         final UserCredential userCredential =
             await FirebaseAuth.instance.signInWithCredential(credential);
+        // ignore: unused_local_variable
         final User? user = userCredential.user;
+        UserManager.displayName = googleUser.displayName;
+        UserManager.email = googleUser.email;
+        UserManager.photoUrl = googleUser.photoUrl;
 
         // if (user != null) {
         // Simpan informasi pengguna di SharedPreferences
@@ -90,23 +95,22 @@ class _LoginPageState extends State<LoginPage> {
         // ignore: use_build_context_synchronously
         //   Navigator.pushReplacementNamed(context, '/home');
         // }
-        if (user != null) {
-          // Simpan informasi pengguna di SessionManager
-          await SessionManager.setGoogleLoginStatus(true);
-          _prefs = await SharedPreferences.getInstance();
-          _prefs.setString('displayName', user.displayName ?? '');
-          _prefs.setString('photoUrl', user.photoURL ?? '');
-          _prefs.setString('email', user.email ?? '');
-          // await SessionManager.setEmail(user.email ?? '');
-          // Lanjutkan dengan menyimpan informasi lain yang Anda perlukan di SessionManager
 
-          // Login dengan Google berhasil, lakukan navigasi ke halaman berikutnya
-          toast('Berhasil masuk!');
-          Navigator.pushReplacementNamed(context, '/home');
-        }
+        // Simpan informasi pengguna di SessionManager
+        await SessionManager.setGoogleLoginStatus(true);
+        _prefs = await SharedPreferences.getInstance();
+        // _prefs.setString('displayName', user.displayName ?? '');
+        // _prefs.setString('photoUrl', user.photoURL ?? '');
+        // _prefs.setString('email', user.email ?? '');
+
+        // Login dengan Google berhasil, lakukan navigasi ke halaman berikutnya
+        toast('Berhasil masuk!');
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacementNamed(context, '/home');
       }
     } catch (e) {
       // Handle error
+      // ignore: avoid_print
       print(e.toString());
     }
   }
@@ -226,7 +230,9 @@ class _LoginPageState extends State<LoginPage> {
         onPressed: isLoading
             ? null
             : () {
-                handleLogin();
+                if (_formKey.currentState!.validate()) {
+                  handleLogin();
+                }
               },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(Colors.black),
@@ -235,7 +241,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         child: isLoading
-            ? const SpinKitWave(
+            ? const SpinKitFadingCircle(
                 size: 25,
                 color: Colors.white,
               )

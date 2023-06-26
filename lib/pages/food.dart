@@ -9,7 +9,7 @@ class Food extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appbar('Makanan'),
+      appBar: appbar(context, 'Makanan'),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(
@@ -17,9 +17,6 @@ class Food extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                'Lovebird Hitam',
-              ),
               const Text(
                 'Makanan Loverbirde pada umumnya diantaranya : ',
                 style: TextStyle(fontWeight: FontWeight.bold),

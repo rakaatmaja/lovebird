@@ -8,7 +8,7 @@ class PerawatanPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appbar('Perawatan'),
+      appBar: appbar(context, 'Perawatan'),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(

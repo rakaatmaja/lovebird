@@ -11,7 +11,7 @@ class JenisPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appbar('JenisPage'),
+      appBar: appbar(context,'Jenis'),
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: StreamBuilder<QuerySnapshot>(
