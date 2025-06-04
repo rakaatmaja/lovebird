@@ -137,8 +137,8 @@ class _RegisterPageState extends State<RegisterPage> {
         height: 55,
         child: ElevatedButton(
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Colors.white),
-            shape: MaterialStateProperty.all(
+            backgroundColor: WidgetStateProperty.all(Colors.white),
+            shape: WidgetStateProperty.all(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),
@@ -177,8 +177,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 }
               },
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.black),
-          shape: MaterialStateProperty.all(
+          backgroundColor: WidgetStateProperty.all(Colors.black),
+          shape: WidgetStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           ),
         ),

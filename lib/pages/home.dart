@@ -1,17 +1,14 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lovebird/auth/auth.dart';
 import 'package:lovebird/models/grid.dart';
-import 'package:lovebird/pages/login/login.dart';
 import 'package:lovebird/utils/theme.dart';
 import 'package:lovebird/widgets/category.dart';
 import 'package:lovebird/widgets/drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lovebird/widgets/toast.dart';
-import '../services/user.dart';
 import '../widgets/about.dart';
 
 class HomePage extends StatefulWidget {
@@ -51,82 +48,27 @@ class _HomePageState extends State<HomePage> {
             return toast('Gagal mendapatkan informasi');
           }
 
-          String? _displayName;
-          String? _email;
-          String? _photoUrl;
+          String? displayName;
+          String? email;
+          String? photoUrl;
 
           // Mendapatkan informasi pengguna dari metode login email/password
           if (user.email != null) {
-            _displayName = user.displayName;
-            _email = user.email;
+            displayName = user.displayName;
+            email = user.email;
           }
 
           // Mendapatkan informasi pengguna dari metode login Google
           if (_googleSignInAccount != null) {
-            _displayName = _googleSignInAccount!.displayName;
-            _email = _googleSignInAccount!.email;
-            _photoUrl = _googleSignInAccount!.photoUrl;
+            displayName = _googleSignInAccount!.displayName;
+            email = _googleSignInAccount!.email;
+            photoUrl = _googleSignInAccount!.photoUrl;
           }
 
-          return Drawer(
-            child: ListView(
-              children: [
-                UserAccountsDrawerHeader(
-                  currentAccountPictureSize: const Size.square(80),
-                  currentAccountPicture: UserManager.photoUrl != null
-                      ? CircleAvatar(
-                          backgroundImage: NetworkImage(UserManager.photoUrl!),
-                        )
-                      : const CircleAvatar(
-                          child: Icon(
-                            Icons.person,
-                            size: 50,
-                          ),
-                        ),
-                  accountName: _displayName != null
-                      ? Text(
-                          _displayName,
-                          style: const TextStyle(fontSize: 16),
-                        )
-                      : null,
-                  accountEmail: _email != null ? Text(_email) : null,
-                ),
-                drawerItem('assets/icons/food.png', 'Bahasa'),
-                drawerItem('assets/icons/food.png', 'Makanan'),
-                drawerItem('assets/icons/footprint.png', 'Jenis'),
-                drawerItem('assets/icons/care.png', 'Perawatan'),
-                drawerItem('assets/icons/gender.png', 'Gender'),
-                const Divider(thickness: 1),
-                drawerItem('assets/icons/info.png', 'Info'),
-                GestureDetector(
-                  onTap: () async {
-                    await _auth.logout();
-                    // SharedPreferences prefs = await SharedPreferences.getInstance();
-                    // bool isGoogleLoggedIn =
-                    //     await SessionManager.getGoogleLoginStatus();
-                    // bool isEmailPasswordLoggedIn =
-                    //     await SessionManager.getEmailPasswordLoginStatus();
-
-                    // if (isGoogleLoggedIn) {
-                    //   await SessionManager.clearGoogleLoginSession();
-                    // } else if (isEmailPasswordLoggedIn) {
-                    //   await SessionManager.clearEmailPasswordLoginSession();
-                    // }
-
-                    // prefs.remove('isLoggedIn');
-                    // ignore: use_build_context_synchronously
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (ctx) => const LoginPage()),
-                        (route) => false);
-                  },
-                  child: const ListTile(
-                    title: Text('Logout'),
-                    leading: Icon(Icons.logout_outlined),
-                  ),
-                ),
-              ],
-            ),
+          return CustomDrawer(
+            displayName: displayName,
+            email: email,
+            photoUrl: photoUrl,
           );
         },
       ),
@@ -276,4 +218,67 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+//   buildDrawer(String? _displayName, String? _email, BuildContext context) {
+//     return Drawer(
+//       child: ListView(
+//         children: [
+//           UserAccountsDrawerHeader(
+//             currentAccountPictureSize: const Size.square(80),
+//             currentAccountPicture: UserManager.photoUrl != null
+//                 ? CircleAvatar(
+//                     backgroundImage: NetworkImage(UserManager.photoUrl!),
+//                   )
+//                 : const CircleAvatar(
+//                     child: Icon(
+//                       Icons.person,
+//                       size: 50,
+//                     ),
+//                   ),
+//             accountName: _displayName != null
+//                 ? Text(
+//                     _displayName,
+//                     style: const TextStyle(fontSize: 16),
+//                   )
+//                 : null,
+//             accountEmail: _email != null ? Text(_email) : null,
+//           ),
+//           // drawerItem('assets/icons/food.png', 'Bahasa'),
+//           // drawerItem('assets/icons/food.png', 'Makanan'),
+//           // drawerItem('assets/icons/footprint.png', 'Jenis'),
+//           // drawerItem('assets/icons/care.png', 'Perawatan'),
+//           // drawerItem('assets/icons/gender.png', 'Gender'),
+//           // const Divider(thickness: 1),
+//           // drawerItem('assets/icons/info.png', 'Info'),
+//           GestureDetector(
+//             onTap: () async {
+//               await _auth.logout();
+//               // SharedPreferences prefs = await SharedPreferences.getInstance();
+//               // bool isGoogleLoggedIn =
+//               //     await SessionManager.getGoogleLoginStatus();
+//               // bool isEmailPasswordLoggedIn =
+//               //     await SessionManager.getEmailPasswordLoginStatus();
+
+//               // if (isGoogleLoggedIn) {
+//               //   await SessionManager.clearGoogleLoginSession();
+//               // } else if (isEmailPasswordLoggedIn) {
+//               //   await SessionManager.clearEmailPasswordLoginSession();
+//               // }
+
+//               // prefs.remove('isLoggedIn');
+//               // ignore: use_build_context_synchronously
+//               Navigator.pushAndRemoveUntil(
+//                   context,
+//                   MaterialPageRoute(builder: (ctx) => const LoginPage()),
+//                   (route) => false);
+//             },
+//             child: const ListTile(
+//               title: Text('Logout'),
+//               leading: Icon(Icons.logout_outlined),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
 }

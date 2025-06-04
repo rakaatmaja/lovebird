@@ -131,92 +131,96 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   buildBody() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 50),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Image.asset(
-                'assets/icon.png',
-                width: 100,
-                height: 100,
-              ),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            const Text(
-              'Welcome back',
-              style: kLogin,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              "Welcome back! Please enter your details.",
-              style: kLoginSubtitle,
-            ),
-            const SizedBox(height: 16),
-            textFieldLogin('Email', _emailController, validateEmail,
-                TextInputType.emailAddress, false),
-            const SizedBox(height: 20),
-            textFieldLogin(
-              'Password',
-              _passwordController,
-              validatePassword,
-              TextInputType.text,
-              isObsecure,
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    isObsecure = !isObsecure;
-                  });
-                },
-                icon: Icon(
-                  isObsecure ? Icons.visibility_off : Icons.visibility,
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 50),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Image.asset(
+                    'assets/icon.png',
+                    width: 100,
+                    height: 100,
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  'Forgot Password?',
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                )),
-            const SizedBox(height: 20),
-            btnLogin(),
-            const SizedBox(
-              height: 16,
-            ),
-            btnGoogle('Sign in with Google'),
-            const SizedBox(
-              height: 30,
-            ),
-            Center(
-              child: RichText(
-                text: TextSpan(
-                  text: "Don't have an account?  ",
-                  style: const TextStyle(color: Colors.black),
-                  children: [
-                    TextSpan(
-                      text: 'Sign up here',
-                      style: const TextStyle(color: Colors.blue),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (ctx) => const RegisterPage()));
-                        },
-                    )
-                  ],
+                const SizedBox(
+                  height: 50,
                 ),
-              ),
+                const Text(
+                  'Welcome back',
+                  style: kLogin,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  "Welcome back! Please enter your details.",
+                  style: kLoginSubtitle,
+                ),
+                const SizedBox(height: 16),
+                textFieldLogin('Email', _emailController, validateEmail,
+                    TextInputType.emailAddress, false),
+                const SizedBox(height: 20),
+                textFieldLogin(
+                  'Password',
+                  _passwordController,
+                  validatePassword,
+                  TextInputType.text,
+                  isObsecure,
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isObsecure = !isObsecure;
+                      });
+                    },
+                    icon: Icon(
+                      isObsecure ? Icons.visibility_off : Icons.visibility,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      'Forgot Password?',
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    )),
+                const SizedBox(height: 20),
+                btnLogin(),
+                const SizedBox(
+                  height: 16,
+                ),
+                btnGoogle('Sign in with Google'),
+                const SizedBox(
+                  height: 30,
+                ),
+                Center(
+                  child: RichText(
+                    text: TextSpan(
+                      text: "Don't have an account?  ",
+                      style: const TextStyle(color: Colors.black),
+                      children: [
+                        TextSpan(
+                          text: 'Sign up here',
+                          style: const TextStyle(color: Colors.blue),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (ctx) => const RegisterPage()));
+                            },
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -235,14 +239,14 @@ class _LoginPageState extends State<LoginPage> {
                 }
               },
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.black),
-          shape: MaterialStateProperty.all(
+          backgroundColor: WidgetStateProperty.all(Colors.black),
+          shape: WidgetStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           ),
         ),
         child: isLoading
             ? const SpinKitFadingCircle(
-                size: 25,
+                size: 50,
                 color: Colors.white,
               )
             : const Text(
@@ -315,8 +319,8 @@ class _LoginPageState extends State<LoginPage> {
         height: 55,
         child: ElevatedButton(
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Colors.white),
-            shape: MaterialStateProperty.all(
+            backgroundColor: WidgetStateProperty.all(Colors.white),
+            shape: WidgetStateProperty.all(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),

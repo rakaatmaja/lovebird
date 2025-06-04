@@ -9,7 +9,7 @@ appbar(BuildContext context, title, [action]) {
         onPressed: () {
           Navigator.pop(context);
         },
-        icon: Icon(Icons.arrow_back_ios)),
+        icon: const Icon(Icons.arrow_back_ios)),
     centerTitle: true,
     title: Text(
       title,
